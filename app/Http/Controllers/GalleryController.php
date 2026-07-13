@@ -8,9 +8,21 @@ use App\Models\Gallery;
 use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Support\Str;
 
 class GalleryController extends Controller
 {
+    private $imageManager;
+
+    public function __construct()
+    {
+        // Initialize Intervention Image with GD driver
+        $this->imageManager = new ImageManager(new Driver());
+    }
+
     public function index(Request $request)
     {
         $category = null;
@@ -47,36 +59,58 @@ class GalleryController extends Controller
     {
         $request->validate([
             'images' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:20000',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,bmp,svg,webp|max:20000',
             'category_id' => 'required|exists:categories,id',
             'title' => 'required|string|max:255',
             'user_id' => 'required|exists:users,id'
         ], [
             'images.*.max' => 'Ukuran file gambar tidak boleh lebih dari :max 20 MB',
-            'images.*.mimes' => 'Format file harus jpeg, png, jpg, atau webp',
-        ]
-    );
-    
+            'images.*.mimes' => 'Format file harus gambar yang valid',
+        ]);
+
         if ($request->hasFile('images')) {
             $category = Category::find($request->category_id);
             $categoryName = $category->name;
             $storagePath = 'public/uploads/' . $categoryName;
-    
+
+            // Ensure directory exists
+            if (!Storage::exists($storagePath)) {
+                Storage::makeDirectory($storagePath);
+            }
+
             foreach ($request->file('images') as $image) {
-                $filename = time() . '_' . $image->getClientOriginalName();
-                $filePath = $image->storeAs($storagePath, $filename);
-                $dbPath = str_replace('public/', 'storage/', $filePath);
-    
-                Gallery::create([
-                    'user_id' => $request->user_id,
-                    'category_id' => $request->category_id,
-                    'title' => $request->title,
-                    'path' => $dbPath,
-                ]);
+                // Generate unique filename dengan ekstensi .webp
+                $filename = time() . '_' . Str::random(10) . '.webp';
+                
+                try {
+                    // Konversi gambar ke WebP menggunakan Intervention Image
+                    $imageData = $this->imageManager->read($image->getRealPath());
+                    
+                    // Encode ke WebP dengan kualitas 80%
+                    $webpImage = $imageData->toWebp(80);
+                    
+                    // Simpan gambar WebP ke storage
+                    $filePath = $storagePath . '/' . $filename;
+                    Storage::put($filePath, $webpImage);
+                    
+                    // Path untuk database (menggunakan storage/)
+                    $dbPath = str_replace('public/', 'storage/', $filePath);
+
+                    Gallery::create([
+                        'user_id' => $request->user_id,
+                        'category_id' => $request->category_id,
+                        'title' => $request->title,
+                        'path' => $dbPath,
+                    ]);
+                } catch (\Exception $e) {
+                    // Log error dan continue dengan gambar berikutnya
+                    Log::error('Image conversion failed: ' . $e->getMessage());
+                    continue;
+                }
             }
         }
-    
-        return redirect()->route('gallery.index')->with('status', 'Images uploaded successfully');
+
+        return redirect()->route('gallery.index')->with('status', 'Images uploaded successfully and converted to WebP');
     }
 
     public function user_show(Category $category)
@@ -96,7 +130,6 @@ class GalleryController extends Controller
         ]); 
     }
 
-
     public function destroy($id)
     {
         $gallery = Gallery::findOrFail($id);
@@ -115,31 +148,68 @@ class GalleryController extends Controller
     {
         return view('pages.gallery.user_index', [
             'title' => 'Gallery',
-            // 'galleries' => Gallery::where('user_id', Auth::id())->get(),
             'categories' => Category::all()
         ]);
     }
 
     public function showImage(Category $category, $imageId)
-{
-    $image = Gallery::findOrFail($imageId);
-    $previousImage = Gallery::where('category_id', $category->id)
+    {
+        $image = Gallery::findOrFail($imageId);
+        $previousImage = Gallery::where('category_id', $category->id)
                           ->where('id', '<', $image->id)
                           ->orderBy('id', 'desc')
                           ->first();
-    $nextImage = Gallery::where('category_id', $category->id)
+        $nextImage = Gallery::where('category_id', $category->id)
                        ->where('id', '>', $image->id)
                        ->orderBy('id', 'asc')
                        ->first();
 
-    return view('pages.gallery.show_image', [
-        'title' => $image->title,
-        'image' => $image,
-        'category' => $category,
-        'previousImage' => $previousImage,
-        'nextImage' => $nextImage,
-        'notification' => Service::where('status', 'Pending')->get(),
-        'pendings' => Service::where('status', 'Pending')->get()
-    ]);
-}
+        return view('pages.gallery.show_image', [
+            'title' => $image->title,
+            'image' => $image,
+            'category' => $category,
+            'previousImage' => $previousImage,
+            'nextImage' => $nextImage,
+            'notification' => Service::where('status', 'Pending')->get(),
+            'pendings' => Service::where('status', 'Pending')->get()
+        ]);
+    }
+
+    /**
+     * Download gambar dengan konversi ke PNG
+     */
+    public function download($id)
+    {
+        $gallery = Gallery::findOrFail($id);
+        
+        // Path file asli di storage
+        $originalPath = str_replace('storage/', 'public/', $gallery->path);
+        
+        if (!Storage::exists($originalPath)) {
+            return redirect()->back()->with('error', 'File not found');
+        }
+
+        try {
+            // Baca file WebP
+            $webpContent = Storage::get($originalPath);
+            
+            // Konversi WebP ke PNG menggunakan Intervention Image
+            $imageData = $this->imageManager->read($webpContent);
+            $pngContent = $imageData->toPng();
+            
+            // Generate nama file untuk download
+            $downloadFilename = Str::slug($gallery->title) . '.png';
+            
+            // Return response download dengan konversi real-time
+            return response()->streamDownload(function () use ($pngContent) {
+                echo $pngContent;
+            }, $downloadFilename, [
+                'Content-Type' => 'image/png',
+                'Content-Disposition' => 'attachment; filename="' . $downloadFilename . '"'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Image download conversion failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to convert image for download');
+        }
+    }
 }

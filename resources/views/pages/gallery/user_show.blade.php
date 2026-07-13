@@ -36,31 +36,32 @@
         </div>
     @endif
 
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div class="w-full mx-auto py-8 sm:py-12 px-4 sm:px-6"> <!-- Perubahan padding disini -->
         @if ($galleries->isEmpty())
         <div class="text-center py-8 sm:py-12">
             <h1 class="text-xl sm:text-2xl font-semibold text-[#3a8d6d]">Mohon maaf, tidak ada foto pada album ini</h1>
         </div>
         @else
-<div class="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3 lg:grid-cols-5 lg:gap-4">
-    @foreach ($galleries as $gallery)
-    <a href="{{ route('gallery.show_image', [$currentCategory->slug, $gallery->id]) }}" 
-       class="block bg-[#effaf5] rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-        <div class="aspect-[4/3] bg-gray-100 overflow-hidden">
-            <img src="{{ asset($gallery->path) }}" 
-                 alt="{{ $gallery->title }}" 
-                 class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+        <!-- Perubahan grid layout disini -->
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            @foreach ($galleries as $gallery)
+            <a href="{{ route('gallery.show_image', [$currentCategory->slug, $gallery->id]) }}" 
+               class="block bg-[#effaf5] rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <div class="aspect-[4/3] bg-gray-100 overflow-hidden">
+                    <img src="{{ asset($gallery->path) }}" 
+                         alt="{{ $gallery->title }}" 
+                         class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                </div>
+                <div class="p-3">
+                    <h3 class="text-xs sm:text-sm font-semibold text-gray-800 truncate">{{ $gallery->title }}</h3>
+                    <p class="text-xs text-gray-500 mt-1">{{ $gallery->created_at->format('d M Y') }}</p>
+                </div>
+            </a>
+            @endforeach
         </div>
-        <div class="p-2 sm:p-3">
-            <h3 class="text-xs sm:text-sm font-semibold text-gray-800 truncate">{{ $gallery->title }}</h3>
-            <p class="text-[10px] sm:text-xs text-gray-500 mt-1">{{ $gallery->created_at->format('d M Y') }}</p>
-        </div>
-    </a>
-    @endforeach
-</div>
         @endif
     </div>
+
 </div>
 
 <!-- Modal Structure - You can keep this as fallback or remove it -->
@@ -98,8 +99,6 @@
         </div>
     </div>
 </div>
-
-<x-footer />
 
 @endsection
 

@@ -228,9 +228,9 @@
 </head>
 <body>
   <div class="carousel">
-    <img src="{{ asset('assets/foto/c1.png') }}" alt="">
-    <img src="{{ asset('assets/foto/c2.png') }}" alt="">
-    <img src="{{ asset('assets/foto/c3.png') }}" alt="">
+    <img src="{{ asset('assets/foto/c1.webp') }}" alt="">
+    <img src="{{ asset('assets/foto/c2.webp') }}" alt="">
+    <img src="{{ asset('assets/foto/c3.webp') }}" alt="">
     
   </div>
   <div class="overlay"></div>
@@ -238,7 +238,7 @@
   <div class="page-wrapper">
     <div class="container">
       <div class="logo-card">
-        <img src="{{ asset('assets/logo/logo1.png') }}" alt="Logo" />
+        <img src="{{ asset('assets/logo/logo1.webp') }}" alt="Logo" />
       </div>
       <div class="form-card">
         <h2>Login</h2>

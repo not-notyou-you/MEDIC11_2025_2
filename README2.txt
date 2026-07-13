@@ -21,3 +21,9 @@ php artisan serve (nyalakan server localhost)
 
 composer dump-autoload (optional, kalau ada masalah middleware)
 
+php artisan route:cache
+php artisan config:cache
+php artisan view:cache
+php artisan optimize
+
+php artisan optimize:clear

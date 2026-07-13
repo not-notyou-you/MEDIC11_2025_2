@@ -5,7 +5,7 @@
     <!-- Logo -->
 
     <div class="rounded-full bg-[#53b490] p-4 shadow-[0px_0px_20px_rgba(0,0,0,0.5) flex items-center justify-center shadow-lg]">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo"
+        <img src="{{ asset('images/logo.webp') }}" alt="Logo"
         class="w-48 h-48 md:w-60 md:h-60 rounded-full object-cover shadow-[0px_0px_10px_rgba(0,0,0,0.3)]">
     </div>
 
@@ -27,5 +27,4 @@
     </a>
 </div>
 
-<x-footer />
 @endsection

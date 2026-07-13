@@ -37,8 +37,6 @@
             <p><strong>Waktu Akhir:</strong> {{ $service->end_time }}</p>
             <p><strong>lokasi:</strong> {{ $service->location }}</p>
             <p><strong>catatan:</strong> {{ $service->note }}</p>
-            <p><strong>Nama Acara:</strong> {{ $service->event_name }}</p>
-            <p><strong>Tanggal Acara:</strong> {{ $service->date }}</p>
             
             <p>Berikut yang dapat kami sampaikan, untuk informasi lebih lanjut dapat menghubungi kami melalui:</p>
             <p>ID Line: @617rkppn</p>

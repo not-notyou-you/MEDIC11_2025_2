@@ -5,7 +5,7 @@
 <div class="p-8 bg-white min-h-[500px] rounded-lg shadow-md">
     <div class="mb-8">
         <h1 class="text-2xl font-semibold text-[#048C6A] mb-2">Upload Photos to Gallery</h1>
-        <p class="text-gray-600">Upload and manage your gallery images</p>
+        <p class="text-gray-600">Upload and manage your gallery images (all images will be converted to WebP format)</p>
     </div>
 
     <form action="{{ route('gallery.upload') }}" method="POST" enctype="multipart/form-data">
@@ -27,7 +27,7 @@
             <select id="category" name="category_id" required
                 class="w-full px-4 py-2 border-2 border-[#048C6A] rounded-lg text-[#048C6A] bg-white shadow-inner outline-none focus:ring-2 focus:ring-[#06D6A0] font-medium">
                 <option value="" disabled selected>Select a category</option>
-                @foreach($categories as $category)
+                @foreach($categories->sortBy('name') as $category)
                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                 @endforeach
             </select>
@@ -48,8 +48,9 @@
         <div class="mb-6">
             <label for="images" class="block text-[#048C6A] font-semibold text-sm mb-1">Select Images</label>
             <input type="file" id="images" name="images[]" multiple required
-                accept="image/jpeg,image/png,image/jpg,image/webp"
+                accept="image/*"
                 class="w-full px-4 py-2 border-2 border-[#048C6A] rounded-lg text-[#048C6A] bg-white shadow-inner outline-none focus:ring-2 focus:ring-[#06D6A0] font-medium">
+            <p class="text-sm text-gray-600 mt-1">Supported formats: JPEG, PNG, GIF, BMP, SVG, WebP. All images will be converted to WebP format.</p>
         </div>
 
         <!-- Action Buttons -->

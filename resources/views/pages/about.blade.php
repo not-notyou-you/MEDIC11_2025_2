@@ -11,7 +11,7 @@
     </div>
 
     <!-- Tentang Kami Section -->
-    <div class="container mx-auto px-6 md:px-12 py-16">
+    <div class="container mx-auto px-0 md:px-0 py-16">
         <div class="bg-[#144034] rounded-xl shadow-2xl overflow-hidden fade-zoom">
             <!-- Card Header -->
             <div class="bg-[#1e5a44] px-6 py-4">
@@ -33,17 +33,17 @@
                         <div id="imageCarousel" class="h-full w-full relative">
                             <!-- Slide 1 -->
                             <div class="carousel-slide absolute inset-0 w-full h-full transition-opacity duration-1000 opacity-100">
-                                <img src="{{ asset('assets/foto/pelatihan7.jpg') }}" alt="Pelatihan" 
+                                <img src="{{ asset('assets/foto/pelatihan7.webp') }}" alt="Pelatihan" 
                                     class="w-full h-full object-cover">
                             </div>
                             <!-- Slide 2 -->
                             <div class="carousel-slide absolute inset-0 w-full h-full transition-opacity duration-1000 opacity-0">
-                                <img src="{{ asset('assets/foto/pelatihan8.jpg') }}" alt="Pelantikan" 
+                                <img src="{{ asset('assets/foto/pelatihan8.webp') }}" alt="Pelantikan" 
                                     class="w-full h-full object-cover">
                             </div>
                             <!-- Slide 3 -->
                             <div class="carousel-slide absolute inset-0 w-full h-full transition-opacity duration-1000 opacity-0">
-                                <img src="{{ asset('assets/foto/pelatihan9.jpg') }}" alt="Percobaan" 
+                                <img src="{{ asset('assets/foto/pelatihan9.webp') }}" alt="Percobaan" 
                                     class="w-full h-full object-cover">
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                     <div class="relative flex-shrink-0 mr-6">
                         <div class="absolute -inset-2 bg-[#3a8d6d] rounded-full shadow-lg"></div>
                         <div class="relative bg-white rounded-full p-4 shadow-lg">
-                            <img src="{{ asset('assets/about/logo.png') }}" class="w-16 h-16 object-contain">
+                            <img src="{{ asset('assets/about/logo.webp') }}" class="w-16 h-16 object-contain">
                         </div>
                     </div>
                     <div>
@@ -82,7 +82,7 @@
                     <div class="relative flex-shrink-0 mr-6">
                         <div class="absolute -inset-2 bg-[#3a8d6d] rounded-full shadow-lg"></div>
                         <div class="relative bg-white rounded-full p-4 shadow-lg">
-                            <img src="{{ asset('assets/about/logo3.png') }}" class="w-16 h-16 object-contain">
+                            <img src="{{ asset('assets/about/logo3.webp') }}" class="w-16 h-16 object-contain">
                         </div>
                     </div>
                     <div>
@@ -96,7 +96,7 @@
                     <div class="relative flex-shrink-0 mr-6">
                         <div class="absolute -inset-2 bg-[#3a8d6d] rounded-full shadow-lg"></div>
                         <div class="relative bg-white rounded-full p-4 shadow-lg">
-                            <img src="{{ asset('assets/about/logo1.png') }}" class="w-16 h-16 object-contain">
+                            <img src="{{ asset('assets/about/logo1.webp') }}" class="w-16 h-16 object-contain">
                         </div>
                     </div>
                     <div>
@@ -113,7 +113,7 @@
                     <div class="relative flex-shrink-0 mr-6">
                         <div class="absolute -inset-2 bg-[#3a8d6d] rounded-full shadow-lg"></div>
                         <div class="relative bg-white rounded-full p-4 shadow-lg">
-                            <img src="{{ asset('assets/about/logo4.png') }}" class="w-16 h-16 object-contain">
+                            <img src="{{ asset('assets/about/logo4.webp') }}" class="w-16 h-16 object-contain">
                         </div>
                     </div>
                     <div>
@@ -127,7 +127,7 @@
                     <div class="relative flex-shrink-0 mr-6">
                         <div class="absolute -inset-2 bg-[#3a8d6d] rounded-full shadow-lg"></div>
                         <div class="relative bg-white rounded-full p-4 shadow-lg">
-                            <img src="{{ asset('assets/about/logo2.png') }}" class="w-16 h-16 object-contain">
+                            <img src="{{ asset('assets/about/logo2.webp') }}" class="w-16 h-16 object-contain">
                         </div>
                     </div>
                     <div>
@@ -147,7 +147,7 @@
                 <!-- Medi -->
                 <div class="bg-white rounded-xl p-6 shadow-xl transform transition-all hover:scale-105 fade-zoom w-full md:w-80">
                     <div class="relative h-64 mb-6">
-                        <img src="{{ asset('assets/mascot/medi4.png') }}" 
+                        <img src="{{ asset('assets/mascot/medi4.webp') }}" 
                              class="w-full h-full object-contain object-center"
                              alt="Maskot medi">
                     </div>
@@ -155,7 +155,7 @@
                         <div onclick="openMediModal()" class="border-2 border-[#048C6A] text-[#048C6A] text-lg shadow-md inline-block font-bold px-4 py-2 rounded-lg hover:bg-[#048C6A] hover:text-white transition duration-300 active:transform active:scale-95 active:shadow-lg active:shadow-[#048C6A] cursor-pointer">
                              M E D I
                         </div>
-                        <img src="{{ asset('assets/logo/MedicWhite_highres.png') }}" 
+                        <img src="{{ asset('assets/logo/MedicWhite_highres.webp') }}" 
                              class="w-20 mx-auto mt-4 opacity-90"
                              alt="Logo UMN Medical Center">
                     </div>
@@ -164,7 +164,7 @@
                 <!-- Ical -->
                 <div class="bg-white rounded-xl p-6 shadow-xl transform transition-all hover:scale-105 fade-zoom w-full md:w-80">
                     <div class="relative h-64 mb-6">
-                        <img src="{{ asset('assets/mascot/ical4.png') }}" 
+                        <img src="{{ asset('assets/mascot/ical4.webp') }}" 
                              class="w-full h-full object-contain object-center"
                              alt="Maskot ical">
                     </div>
@@ -172,7 +172,7 @@
                         <div onclick="openIcalModal()" class="border-2 border-[#048C6A] text-[#048C6A] text-lg shadow-md inline-block font-bold px-4 py-2 rounded-lg hover:bg-[#048C6A] hover:text-white transition duration-300 active:transform active:scale-95 active:shadow-lg active:shadow-[#048C6A] cursor-pointer">
                              I C A L 
                         </div>
-                        <img src="{{ asset('assets/logo/MedicWhite_highres.png') }}" 
+                        <img src="{{ asset('assets/logo/MedicWhite_highres.webp') }}" 
                              class="w-20 mx-auto mt-4 opacity-90"
                              alt="Logo UMN Medical Center">
                     </div>
@@ -184,8 +184,6 @@
     <!-- Include modals -->
     <x-medi_nav />
     <x-ical_nav />
-    
-    <x-footer />
 
     <style>
         /* Carousel Styles */
@@ -230,27 +228,6 @@
         document.addEventListener("DOMContentLoaded", function() {
 
             const elements = document.querySelectorAll(".fade-zoom");
-
-            function animateOnScroll() {
-                const viewportHeight = window.innerHeight;
-
-                elements.forEach(el => {
-                    const rect = el.getBoundingClientRect();
-                    const distanceFromCenter = Math.abs(viewportHeight / 2 - (rect.top + rect.height / 2));
-
-                    const fadeStart = viewportHeight * 0.10;
-                    const fadeEnd = viewportHeight * 0.7;
-                    const fadeAmount = Math.min(1, Math.max(0, (distanceFromCenter - fadeStart) / (fadeEnd - fadeStart)));
-
-                    const scaleAmount = 1 - fadeAmount * 0.25;
-
-                    el.style.opacity = 1 - fadeAmount;
-                    el.style.transform = `scale(${scaleAmount})`;
-                });
-            }
-
-            window.addEventListener("scroll", animateOnScroll);
-            animateOnScroll();
 
             const carousel = document.getElementById('imageCarousel');
             if (carousel) {

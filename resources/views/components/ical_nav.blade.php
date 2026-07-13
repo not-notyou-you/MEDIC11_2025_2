@@ -38,19 +38,19 @@
         // Data for Ical
         const icalData = [
             {
-                image: "{{ asset('assets/mascot/ical1.png') }}",
+                image: "{{ asset('assets/mascot/ical1.webp') }}",
                 question: "Hallo, perkenalkan, namaku Ical, selamat datang di website resmi UMN Medical Center. Apakah teman-teman ingin melihat galeri kegiatan kami?",
                 yesLink: "{{ route('gallery.user_index') }}",
                 yesText: "Iya, saya ingin melihatnya"
             },
             {
-                image: "{{ asset('assets/mascot/ical2.png') }}",
+                image: "{{ asset('assets/mascot/ical2.webp') }}",
                 question: "Hallo, perkenalkan, namaku Ical, selamat datang di website resmi UMN Medical Center. Dengan website ini kamu dapat melakukan pengajuan jasa, apakah kamu ingin melakukan pengajuan jasa?",
                 yesLink: "{{ route('service.index') }}",
                 yesText: "Iya, saya ingin melakukannya"
             },
             {
-                image: "{{ asset('assets/mascot/ical2.png') }}",
+                image: "{{ asset('assets/mascot/ical2.webp') }}",
                 question: "Hallo, perkenalkan, namaku Ical, selamat datang di website resmi UMN Medical Center. UMN Medical Center memiliki beberapa program kerja, apakah teman-teman tertarik untuk mengetahuinya?",
                 yesLink: "{{ route('program') }}",
                 yesText: "Iya, saya tertarik"

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\Service;
 use App\Models\User;
+use Illuminate\Validation\Rules;
 
 class ProfileController extends Controller
 {
@@ -62,7 +63,7 @@ class ProfileController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
-            'is_admin' => ['required', 'boolean'],
+            'is_admin' => ['required', 'integer', 'in:0,1,2'], // Ubah validasi
         ]);
 
         User::create([
@@ -116,25 +117,40 @@ class ProfileController extends Controller
     public function update_admin(Request $request, $id): RedirectResponse
     {
         $user = User::findOrFail($id);
-
+        
+        // Cek jika user yang login adalah superadmin
+        $currentUser = Auth::user();
+        
         $request->validate([
             'email' => ['required', 'email', 'unique:users,email,' . $user->id, 'ends_with:umn.ac.id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'status' => ['required', 'boolean'], // Perhatikan nama field 'status'
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'status' => ['required', 'integer', 'in:0,1,2'], // Ubah validasi
         ]);
 
-        // Gunakan assignment langsung
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+                
+        // **PERBAIKAN DI SINI: Gunakan constant ROLE_SUPERADMIN**
+        // Jika bukan superadmin, tidak boleh membuat superadmin atau mengubah superadmin lain
+        if ($currentUser->is_admin != User::ROLE_SUPERADMIN) {
+            if ($request->status == User::ROLE_SUPERADMIN || $user->is_admin == User::ROLE_SUPERADMIN) {
+                return back()->withErrors(['status' => 'Only superadmin can manage superadmin roles.']);
+            }
+        }
+
         $user->email = $request->email;
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
-        $user->is_admin = $request->status; 
+        $user->is_admin = $request->status;
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
-        $user->save(); 
+        $user->save();
 
         return Redirect::route('profile.index')->with('status', $user->first_name . ' has been updated!');
     }
@@ -170,4 +186,20 @@ class ProfileController extends Controller
 
         return Redirect::route('profile.index')->with('status', $user->first_name . ' has been deleted!');
     }
+
+    public function password_update(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $request->user()->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return back()->with('status', 'password-updated');
+    }
+
+
 }

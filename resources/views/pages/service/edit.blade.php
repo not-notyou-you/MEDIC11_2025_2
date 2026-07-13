@@ -1,6 +1,14 @@
 @extends('layouts.dashboard_template')
 
 @section('content')
+
+<!-- Data untuk JavaScript - Disembunyikan -->
+<div id="medicalEquipmentData" 
+     data-has-medical="{{ $service->type === 'Alat Kesehatan' ? 'true' : 'false' }}"
+     data-equipment="{{ $service->type === 'Alat Kesehatan' ? implode(', ', $service->medical_equipment ?? []) : '' }}"
+     style="display: none;">
+</div>
+
 <div class="min-h-screen bg-[#effaf5] p-6">
     <!-- Modal Konfirmasi -->
     <div id="emailConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
@@ -21,6 +29,38 @@
                     Kirim
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Status Information -->
+    <div id="statusInfoModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-md hidden">
+        <div onclick="event.stopPropagation()" class="bg-gradient-to-br from-[#e0f2ec] to-[#f5fffc] text-[#144034] rounded-3xl border-8 border-double border-[#319875] shadow-glow w-11/12 max-w-md px-6 py-8 animate-fade-in ring-4 ring-[#a4dbc8]">
+            <h2 class="text-xl font-bold text-center mb-4">Informasi Status Layanan</h2>
+            
+            <div class="space-y-3 text-left">
+                <div>
+                    <p class="font-bold">PENDING:</p>
+                    <p class="ml-4">- Pengajuan belum disetujui</p>
+                    <p class="ml-4">- Menunggu verifikasi admin</p>
+                </div>
+                <div>
+                    <p class="font-bold">ON PROGRESS:</p>
+                    <p class="ml-4">- Pengajuan telah disetujui</p>
+                    <p class="ml-4">- Menunggu hari pelaksanaan</p>
+                </div>
+                <div>
+                    <p class="font-bold">COMPLETED:</p>
+                    <p class="ml-4">- Pengajuan telah selesai</p>
+                    <p class="ml-4">- Sesuai dengan permintaan</p>
+                </div>
+                <div>
+                    <p class="font-bold">CANCELED:</p>
+                    <p class="ml-4">- Pengajuan dibatalkan</p>
+                    <p class="ml-4">- Karena beberapa hal</p>
+                </div>
+            </div>
+            
+            <p class="mt-4 text-center text-sm text-gray-600">Modal akan tertutup otomatis dalam 10 detik</p>
         </div>
     </div>
 
@@ -68,7 +108,7 @@
         <div class="sm:col-span-2 lg:col-span-3">
             <label class="block mb-1">Alat Kesehatan yang Dipinjam</label>
             <div class="grid grid-cols-2 gap-4">
-                @foreach(['kursi roda', 'tabung oksigen', 'tandu lipat', 'tandu sekop', 'tenda'] as $equipment)
+                @foreach(['kursi roda', 'tabung oksigen', 'tandu lipat', 'tandu sekop', 'tenda', 'tongkat', 'tas obat dalam', 'tas obat luar', 'tas obat dalam dan luar', 'ice pack', 'ice box'] as $equipment)
                     <div class="flex items-center">
                         <input type="checkbox" class="text-[#048C6A]" id="equipment-{{ $loop->index }}" 
                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
@@ -96,15 +136,22 @@
         @csrf
         @method('PUT')
 
-        <div class="col-span-full sm:w-1/2 mx-auto text-center">
-            <label for="status" class="block mb-1">Status</label>
-                <select id="status" name="status"
-                    class="w-full px-3 py-2 bg-white border border-[#048C6A] text-sm font-medium text-[#144034] rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="{{ App\Models\Service::STATUS_PENDING }}" @if ($service->status == App\Models\Service::STATUS_PENDING) selected @endif>Pending</option>
-                    <option value="{{ App\Models\Service::STATUS_ON_PROGRESS }}" @if ($service->status == App\Models\Service::STATUS_ON_PROGRESS) selected @endif>On Progress</option>
-                    <option value="{{ App\Models\Service::STATUS_COMPLETED }}" @if ($service->status == App\Models\Service::STATUS_COMPLETED) selected @endif>Completed</option>
-                    <option value="{{ App\Models\Service::STATUS_CANCELED }}" @if ($service->status == App\Models\Service::STATUS_CANCELED) selected @endif>Canceled</option>
-                </select>
+        <div class="col-span-full sm:w-1/2 mx-auto">
+            <div class="flex items-center justify-center mb-2">
+                <label for="status" class="block mb-0 mr-2">Status</label>
+                <!-- Tombol info status -->
+                <button type="button" onclick="showStatusInfo()" 
+                    class="bg-[#048C6A] text-white w-6 h-6 rounded-full flex items-center justify-center font-bold hover:bg-[#06D6A0] transition-colors">
+                    i
+                </button>
+            </div>
+            <select id="status" name="status"
+                class="w-full px-3 py-2 bg-white border border-[#048C6A] text-sm font-medium text-[#144034] rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="{{ App\Models\Service::STATUS_PENDING }}" @if ($service->status == App\Models\Service::STATUS_PENDING) selected @endif>Pending</option>
+                <option value="{{ App\Models\Service::STATUS_ON_PROGRESS }}" @if ($service->status == App\Models\Service::STATUS_ON_PROGRESS) selected @endif>On Progress</option>
+                <option value="{{ App\Models\Service::STATUS_COMPLETED }}" @if ($service->status == App\Models\Service::STATUS_COMPLETED) selected @endif>Completed</option>
+                <option value="{{ App\Models\Service::STATUS_CANCELED }}" @if ($service->status == App\Models\Service::STATUS_CANCELED) selected @endif>Canceled</option>
+            </select>
         </div>
 
         <!-- Tombol Aksi -->
@@ -126,7 +173,7 @@
                 Kirim Email
             </button>
 
-            <a href="{{ route('service.download-word', $service->id) }}" target="_blank"
+            <a href="{{ route('service.surat', $service->id) }}" target="_blank"
                 class="border-2 border-[#048C6A] text-[#048C6A] font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-[#048C6A] hover:text-white transition duration-300 active:transform active:scale-95 active:shadow-lg active:shadow-[#048C6A]">
                 Cetak
             </a>
@@ -165,6 +212,7 @@
             const modal = document.getElementById('emailConfirmationModal');
             const modalContent = document.getElementById('modalContent');
             const status = "{{ $service->status }}";
+            const medicalData = document.getElementById('medicalEquipmentData');
             
             let html = `
                 <p>Apakah yakin akan mengirim email kepada:</p>
@@ -178,9 +226,9 @@
             `;
             
             // Tampilkan alat kesehatan jika tipe Alat Kesehatan
-            @if($service->type === 'Alat Kesehatan')
-            html += `<p><strong>Alat Kesehatan:</strong> {{ implode(', ', $service->medical_equipment ?? []) }}</p>`;
-            @endif
+            if (medicalData.dataset.hasMedical === 'true' && medicalData.dataset.equipment) {
+                html += `<p><strong>Alat Kesehatan:</strong> ${medicalData.dataset.equipment}</p>`;
+            }
             
             if (status === 'Canceled') {
                 html += `
@@ -209,12 +257,66 @@
             
             if (status === 'Canceled') {
                 const reason = document.getElementById('reasonInput').value;
+                if (!reason.trim()) {
+                    alert('Harap isi alasan pembatalan');
+                    return;
+                }
                 document.getElementById('cancelReason').value = reason;
             }
             
             form.submit();
             closeModal();
         }
+        
+        // Fungsi untuk menampilkan modal informasi status
+        function showStatusInfo() {
+            const modal = document.getElementById('statusInfoModal');
+            modal.classList.remove('hidden');
+
+            setTimeout(() => {
+                closeStatusModal();
+            }, 10000);
+        }
+
+        function closeStatusModal() {
+            document.getElementById('statusInfoModal').classList.add('hidden');
+        }
+        
+        document.getElementById('statusInfoModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('statusInfoModal')) {
+                closeStatusModal();
+            }
+        });
+        
+        document.querySelector('#statusInfoModal > div').addEventListener('click', () => {
+            closeStatusModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusSelect = document.getElementById('status');
+            const statusForm = statusSelect.closest('form');
+            
+            statusForm.addEventListener('submit', function(e) {
+                if (!confirm('Apakah Anda yakin ingin mengubah status pengajuan ini?')) {
+                    e.preventDefault();
+                }
+            });
+        });
     </script>
+
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out forwards;
+        }
+        
+        .shadow-glow {
+            box-shadow: 0 0 15px rgba(72, 187, 120, 0.5);
+        }
+    </style>
 </div>
 @endsection

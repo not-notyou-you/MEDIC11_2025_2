@@ -20,29 +20,42 @@
         </div>
 
         {{-- Input Alat Kesehatan (Hanya untuk Alat Kesehatan) --}}
-        <div id="medical-equipment-wrapper" class="hidden px-10 pt--30 pb-10">
-            <label class="block text-sm font-bold text-[#048C6A]">Pilih Alat Kesehatan</label>
-            <div class="grid grid-cols-2 gap-2">
-                <div class="flex items-center">
-                    <input id="kursi-roda" type="checkbox" name="medical_equipment[]" value="kursi roda" class="w-4 h-4 text-[#048C6A] bg-gray-100 border-gray-300 rounded focus:ring-green-500">
-                    <label for="kursi-roda" class="ms-2 text-sm font-bold text-[#048C6A]">Kursi Roda</label>
+        <div id="medical-equipment-wrapper" class="hidden px-10 pt-30 pb-10">
+            <label class="block text-sm font-bold text-[#048C6A] mb-4">Pilih Alat Kesehatan</label>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                @php
+                    $equipmentList = [
+                        'kursi roda' => 'Kursi Roda',
+                        'tabung oksigen' => 'Tabung Oksigen',
+                        'tandu lipat' => 'Tandu Lipat',
+                        'tandu sekop' => 'Tandu Sekop',
+                        'tenda' => 'Tenda',
+                        'tongkat' => 'Tongkat',
+                        'tas obat dalam' => 'Tas Obat Dalam',
+                        'tas obat luar' => 'Tas Obat Luar',
+                        'tas obat dalam dan luar' => 'Tas Obat Dalam dan Luar',
+                        'ice pack' => 'Ice Pack',
+                        'ice box' => 'Ice Box'
+                    ];
+                @endphp
+                
+                @foreach($equipmentList as $value => $label)
+                <div class="flex items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                    <input 
+                        id="equipment-{{ str_replace(' ', '-', $value) }}" 
+                        type="checkbox" 
+                        name="medical_equipment[]" 
+                        value="{{ $value }}" 
+                        class="w-4 h-4 text-[#048C6A] bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-[#048C6A] focus:ring-offset-0"
+                    >
+                    <label 
+                        for="equipment-{{ str_replace(' ', '-', $value) }}" 
+                        class="ms-3 text-sm font-medium text-gray-900 cursor-pointer hover:text-[#048C6A] transition-colors duration-200 flex-1"
+                    >
+                        {{ $label }}
+                    </label>
                 </div>
-                <div class="flex items-center">
-                    <input id="tabung-oksigen" type="checkbox" name="medical_equipment[]" value="tabung oksigen" class="w-4 h-4 text-[#048C6A] bg-gray-100 border-gray-300 rounded focus:ring-green-500">
-                    <label for="tabung-oksigen" class="ms-2 text-sm font-bold text-[#048C6A]">Tabung Oksigen</label>
-                </div>
-                <div class="flex items-center">
-                    <input id="tandu-lipat" type="checkbox" name="medical_equipment[]" value="tandu lipat" class="w-4 h-4 text-[#048C6A] bg-gray-100 border-gray-300 rounded focus:ring-green-500">
-                    <label for="tandu-lipat" class="ms-2 text-sm font-bold text-[#048C6A]">Tandu Lipat</label>
-                </div>
-                <div class="flex items-center">
-                    <input id="tandu-sekop" type="checkbox" name="medical_equipment[]" value="tandu sekop" class="w-4 h-4 text-[#048C6A] bg-gray-100 border-gray-300 rounded focus:ring-green-500">
-                    <label for="tandu-sekop" class="ms-2 text-sm font-bold text-[#048C6A]">Tandu Sekop</label>
-                </div>
-                <div class="flex items-center">
-                    <input id="tenda" type="checkbox" name="medical_equipment[]" value="tenda" class="w-4 h-4 text-[#048C6A] bg-gray-100 border-gray-300 rounded focus:ring-green-500">
-                    <label for="tenda" class="ms-2 text-sm font-bold text-[#048C6A]">Tenda</label>
-                </div>          
+                @endforeach
             </div>
         </div>
 
@@ -92,5 +105,4 @@
     });
 </script>
 
-<x-footer />
 @endsection

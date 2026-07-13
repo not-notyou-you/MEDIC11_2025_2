@@ -16,7 +16,6 @@ use App\Mail\NewServiceNotification;
 use App\Exports\ServicesExport;
 use App\Imports\ServicesImport;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
@@ -61,6 +60,7 @@ class ServiceController extends Controller
         }
 
         $data = $validator->validated();
+        $data['status'] = Service::STATUS_PENDING;
         
         if ($request->type === 'Alat Kesehatan' && $request->has('medical_equipment')) {
             $data['medical_equipment'] = $request->medical_equipment;
@@ -70,12 +70,38 @@ class ServiceController extends Controller
 
         $service = Service::create($data);
 
-        // Kirim notifikasi ke semua admin
-        $admins = User::where('is_admin', true)->get();
+        // 1. Send notification to applicant
+        try {
+            Mail::to($service->email)->send(new ServicePendingNotification($service));
+        } catch (\Exception $e) {
+            Log::error('Gagal mengirim notifikasi pending ke pengaju: ' . $service->email, [
+                'error' => $e->getMessage(),
+                'service_id' => $service->id
+            ]);
+        }
+
+        // 2. Send notifications to ALL USERS (both admin and regular users)
+        $this->notifyAllUsers($service);
+
+        return redirect()->route('service.index')
+            ->with('status', 'Pengajuan telah diterima, harap segera konfirmasi ke LINE kami. Terima kasih.');
+    }
+
+    /**
+     * Notify all users about the new service request
+     */
+    protected function notifyAllUsers(Service $service)
+    {
+        // Menggunakan constant dari model User
+        $admins = User::where('is_admin', '>=', User::ROLE_ADMIN)->get();
         
         foreach ($admins as $admin) {
             try {
+                // Skip applicant to avoid duplicate notification
+                if ($admin->email === $service->email) continue;
+                
                 Mail::to($admin->email)->send(new NewServiceNotification($service));
+                Log::info('Notifikasi berhasil dikirim ke admin: ' . $admin->email);
             } catch (\Exception $e) {
                 Log::error('Gagal mengirim notifikasi ke admin: ' . $admin->email, [
                     'error' => $e->getMessage(),
@@ -83,9 +109,6 @@ class ServiceController extends Controller
                 ]);
             }
         }
-
-        return redirect()->route('service.index')
-            ->with('status', 'Pengajuan telah diterima, harap segera konfirmasi ke LINE kami. Terima kasih.');
     }
 
     public function show()
@@ -147,7 +170,8 @@ class ServiceController extends Controller
     {
         $service = Service::findOrFail($id);
         
-        $validStatuses = ['Pending', 'On Progress', 'Completed', 'Canceled'];
+        $validStatuses = [Service::STATUS_PENDING, Service::STATUS_ON_PROGRESS, 
+                         Service::STATUS_COMPLETED, Service::STATUS_CANCELED];
         
         if (!in_array($service->status, $validStatuses)) {
             Log::error('Invalid service status encountered', [
@@ -161,16 +185,16 @@ class ServiceController extends Controller
             $cancelReason = $request->input('cancel_reason', null);
 
             switch ($service->status) {
-                case 'Pending':
+                case Service::STATUS_PENDING:
                     Mail::to($service->email)->send(new ServicePendingNotification($service));
                     break;
-                case 'On Progress':
+                case Service::STATUS_ON_PROGRESS:
                     Mail::to($service->email)->send(new ServiceOnProgressNotification($service));
                     break;
-                case 'Completed':
+                case Service::STATUS_COMPLETED:
                     Mail::to($service->email)->send(new ServiceCompletedNotification($service));
                     break;
-                case 'Canceled':
+                case Service::STATUS_CANCELED:
                     Mail::to($service->email)->send(new ServiceCanceledNotification($service, $cancelReason));
                     break;
                 default:
@@ -187,23 +211,11 @@ class ServiceController extends Controller
             return back()->with('email_error', 'Gagal mengirim email: ' . $e->getMessage());
         }
     }
-
-    public function downloadWord($id)
-    {
-        $service = Service::findOrFail($id);
-        $fileName = 'Permintaan-Layanan-' . $service->event_name . '.doc';
-
-        $html = view('pages.Service.template-word', compact('service'))->render();
-        
-        return response()->streamDownload(function () use ($html) {
-            echo $html;
-        }, $fileName);
-    }
-
+    
     public function export() 
-{
-    return Excel::download(new ServicesExport, 'services.xlsx');
-}
+    {
+        return Excel::download(new ServicesExport, 'services.xlsx');
+    }
 
     public function clear()
     {
@@ -223,5 +235,15 @@ class ServiceController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Error importing services: '. $e->getMessage());
         }
+    }
+
+    public function surat($id)
+    {
+        $service = Service::findOrFail($id);
+        
+        return view('pages.Service.surat', [
+            'service' => $service,
+            'title' => 'Surat Pengajuan'
+        ]);
     }
 }

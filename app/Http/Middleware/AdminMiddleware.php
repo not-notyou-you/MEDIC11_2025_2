@@ -11,7 +11,8 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->is_admin == 1) {
+        // Izinkan admin (1) dan superadmin (2)
+        if (Auth::check() && Auth::user()->is_admin >= 1) {
             return $next($request);
         }
 

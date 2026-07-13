@@ -36,8 +36,6 @@
             <p><strong>Waktu Akhir:</strong> {{ $service->end_time }}</p>
             <p><strong>lokasi:</strong> {{ $service->location }}</p>
             <p><strong>catatan:</strong> {{ $service->note }}</p>
-            <p><strong>Nama Acara:</strong> {{ $service->event_name }}</p>
-            <p><strong>Tanggal Acara:</strong> {{ $service->date }}</p>
             
             <p>Kami akan memberikan kabar terbaru segera. Terima kasih atas kesabaran Anda.</p>
             <p>untuk informasi lebih lanjut dapat menghubungi kami melalui:</p>

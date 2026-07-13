@@ -13,12 +13,18 @@
     <div class="flex flex-col lg:flex-row gap-6">
         <!-- Sidebar Categories -->
         <div class="lg:w-1/4">
+            <!-- Upload Photos Button - Moved to top -->
+            <a href="{{ route('gallery.create') }}"
+               class="mb-4 block w-full text-center px-6 py-3 bg-[#048C6A] text-white font-semibold rounded-lg hover:bg-[#036a4f] transition-colors duration-200">
+                Upload Photos
+            </a>
+            
             <div class="bg-white border border-[#048C6A] rounded-lg overflow-hidden">
                 <div class="bg-[#048C6A] text-white px-6 py-3 text-center font-semibold">
                     Select Category
                 </div>
                 <ul class="divide-y divide-[#e5e7eb]">
-                    @foreach ($categories as $category)
+                    @foreach ($categories->sortBy('name') as $category)
                     <li>
                         <a href="{{ route('gallery.index', ['category' => $category->slug]) }}" 
                            class="block px-6 py-3 hover:bg-[#f0fdf4] transition-colors duration-200 {{ $currentCategory && $category->slug == $currentCategory->slug ? 'bg-[#d1f7e8]' : '' }}">
@@ -28,10 +34,6 @@
                     @endforeach
                 </ul>
             </div>
-            <a href="{{ route('gallery.create') }}"
-               class="mt-4 block w-full text-center px-6 py-3 bg-[#048C6A] text-white font-semibold rounded-lg hover:bg-[#036a4f] transition-colors duration-200">
-                Upload Photos
-            </a>
         </div>
         
         <!-- Main Content -->

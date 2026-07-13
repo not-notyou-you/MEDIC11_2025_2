@@ -5,17 +5,17 @@
     <div class="px-6 md:px-12 py-6 flex flex-col md:flex-row justify-between items-center md:items-start gap-6">
         <!-- Kiri: Logo, Sosial Media, dan Kontak -->
         <div class="flex flex-col items-center md:items-start text-center md:text-left space-y-3">
-            <img src="{{ asset('/assets/logo/MedicWhite_highres.png') }}" alt="Logo Medic" class="h-20 mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">
+            <img src="{{ asset('/assets/logo/MedicWhite_highres.webp') }}" alt="Logo Medic" class="h-20 mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">
             
             <div class="flex gap-4">
                 <a href="https://www.instagram.com/umnmedicalcenter/" target="_blank" class="hover:scale-110 transition">
-                    <img src="{{ asset('/assets/logo/instagram.png') }}" alt="Instagram" class="w-6 h-6">
+                    <img src="{{ asset('/assets/logo/instagram.webp') }}" alt="Instagram" class="w-6 h-6">
                 </a>
                 <a href="https://line.me/R/ti/p/@617rpkkn" target="_blank" class="hover:scale-110 transition">
-                    <img src="{{ asset('/assets/logo/line.png') }}" alt="Line" class="w-6 h-6">
+                    <img src="{{ asset('/assets/logo/line.webp') }}" alt="Line" class="w-6 h-6">
                 </a>
                 <a href="https://www.tiktok.com/@medical.center.umn" target="_blank" class="hover:scale-110 transition">
-                    <img src="{{ asset('/assets/logo/tiktok.png') }}" alt="TikTok" class="w-6 h-6">
+                    <img src="{{ asset('/assets/logo/tiktok.webp') }}" alt="TikTok" class="w-6 h-6">
                 </a>
             </div>
 
